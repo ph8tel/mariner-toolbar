@@ -16,10 +16,25 @@ function getCurrentTabUrl(callback) {
 
 function changeBackgroundColor(color) {
     // var script = 'document.body.style.backgroundColor="' + color + '";';
-    var script = `var commentsObj = document.getElementsByClassName('comment-text-content')
+    var script = `
+    var commentText = [];
+    var commentsObj = document.getElementsByClassName('comment-text-content');
     for (let i in commentsObj) {
-        commentsObj[i].style.backgroundColor = '${color}'
-    }`
+        if (commentsObj.hasOwnProperty(i)){
+            commentText.push(commentsObj[i].innerHTML)
+            if (commentsObj[i].innerHTML.split('?').length > 1){    
+                commentsObj[i].style.backgroundColor = 'red'
+            } else {          
+                commentsObj[i].style.backgroundColor = '${color}'
+            }
+        }
+    }
+    console.log(commentText)
+    let wordCount = {}
+    let allText = commentText.join(' ')
+    allText.split(' ').forEach( word => wordCount[word] ? wordCount[word]++ : wordCount[word] = 1)
+    console.log(wordCount)
+    `
 
     chrome.tabs.executeScript({
         code: script
